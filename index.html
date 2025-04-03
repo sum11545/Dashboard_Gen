@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .charts {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .chart {
+            margin: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="charts">
+        <div class="chart">
+            <canvas id="pieChart"></canvas>
+        </div>
+        <div class="chart">
+            <canvas id="lineChart"></canvas>
+        </div>
+        <div class="chart">
+            <canvas id="barChart"></canvas>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const data = {"_id":"67ed9b937a9d1254665170a4","data":[{"Industry":"Accounting/Finance"},{"Industry":"Advertising/Public Relations"},{"Industry":"Aerospace/Aviation"},{"Industry":"Arts/Entertainment/Publishing"},{"Industry":"Automotive"},{"Industry":"Banking/Mortgage"},{"Industry":"Business Development"},{"Industry":"Business Opportunity"},{"Industry":"Clerical/Administrative"},{"Industry":"Construction/Facilities"},{"Industry":"Consumer Goods"},{"Industry":"Customer Service"},{"Industry":"Education/Training"},{"Industry":"Energy/Utilities"},{"Industry":"Engineering"},{"Industry":"Government/Military"},{"Industry":"Green"},{"Industry":"Healthcare"},{"Industry":"Hospitality/Travel"},{"Industry":"Human Resources"},{"Industry":"Installation/Maintenance"},{"Industry":"Insurance"},{"Industry":"Internet"},{"Industry":"Job Search Aids"},{"Industry":"Law Enforcement/Security"},{"Industry":"Legal"},{"Industry":"Management/Executive"},{"Industry":"Manufacturing/Operations"},{"Industry":"Marketing"},{"Industry":"Non-Profit/Volunteer"},{"Industry":"Pharmaceutical/Biotech"},{"Industry":"Professional Services"},{"Industry":"QA/Quality Control"},{"Industry":"Real Estate"},{"Industry":"Restaurant/Food Service"},{"Industry":"Retail"},{"Industry":"Sales"},{"Industry":"Science/Research"},{"Industry":"Skilled Labor"},{"Industry":"Technology"},{"Industry":"Telecommunications"},{"Industry":"Transportation/Logistics"},{"Industry":"Other"}],"__v":0};      
+
+        const industries = data.data.map(item => item.Industry);
+        const chartData = industries.map(() => Math.floor(Math.random() * 100));
+
+        const pieChartCanvas = document.getElementById('pieChart').getContext('2d');
+        const lineChartCanvas = document.getElementById('lineChart').getContext('2d');
+        const barChartCanvas = document.getElementById('barChart').getContext('2d');
+
+        const pieChart = new Chart(pieChartCanvas, {
+            type: 'pie',
+            data: {
+                labels: industries,
+                datasets: [{
+                    label: 'Industries',
+                    data: chartData,
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)',
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)',
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)',
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)',
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)',
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)',
+                        'rgba(255, 159, 64, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)',
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)',
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)',
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)',
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)',
+                        'rgba(255, 99, 132, 1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)',
+                        'rgba(255, 159, 64, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                title: {
+                    display: true,
+                    text: 'Industries'
+                }
+            }
+        });
+
+        const lineChart = new Chart(lineChartCanvas, {
+            type: 'line',
+            data: {
+                labels: industries,
+                datasets: [{
+                    label: 'Industries',
+                    data: chartData,
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                title: {
+                    display: true,
+                    text: 'Industries'
+                }
+            }
+        });
+
+        const barChart = new Chart(barChartCanvas, {
+            type: 'bar',
+            data: {
+                labels: industries,
+                datasets: [{
+                    label: 'Industries',
+                    data: chartData,
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                title: {
+                    display: true,
+                    text: 'Industries'
+                }
+            }
+        });
+    </script>
+</body>
+</html>
