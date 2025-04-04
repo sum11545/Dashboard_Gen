@@ -1,189 +1,243 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-        }
-        .charts {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-        .chart {
-            margin: 20px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard</title>
+  <!-- Add Chart.js library -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    #dashboard {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-around;
+      width: 100%;
+      padding: 2rem;
+      box-sizing: border-box;
+    }
+
+    .chart-container {
+      width: 48%;
+      margin-bottom: 2rem;
+    }
+
+    h3 {
+      color: #575757;
+      font-size: 1.6rem;
+      margin-bottom: 1rem;
+    }
+
+    .legend {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      padding: 0 1rem;
+      box-sizing: border-box;
+    }
+
+    .filter-container {
+      width: 48%;
+      margin-bottom: 2rem;
+    }
+
+    label,
+    select {
+      display: block;
+      width: 100%;
+      height: 3.6rem;
+      line-height: 3.6rem;
+      padding: 0 1rem;
+      margin-bottom: 1rem;
+      background-color: #f5f5f5;
+      border: none;
+      font-size: 1.2rem;
+    }
+
+    option {
+      line-height: 3.6rem;
+      padding: 0 1rem;
+    }
+
+    .tooltip {
+      visibility: hidden;
+      background-color: #333;
+      color: #fff;
+      text-align: center;
+      padding: 5px 0;
+      border-radius: 6px;
+      position: absolute;
+      z-index: 1;
+    }
+
+    .chart-container:hover .tooltip {
+      visibility: visible;
+    }
+
+    @media (max-width: 768px) {
+      h3,
+      label,
+      select {
+        font-size: 1.4rem;
+      }
+
+      .chart-container,
+      .filter-container {
+        width: 100%;
+      }
+    }
+  </style>
 </head>
 <body>
-    <div class="charts">
-        <div class="chart">
-            <canvas id="pieChart"></canvas>
-        </div>
-        <div class="chart">
-            <canvas id="lineChart"></canvas>
-        </div>
-        <div class="chart">
-            <canvas id="barChart"></canvas>
-        </div>
+  <div id="dashboard">
+    <!-- Bar Chart -->
+    <div class="chart-container">
+      <h3>Status by Product</h3>
+      <canvas id="barChart"></canvas>
+      <div class="tooltip" id="barTooltip">
+        <p><strong>Product:</strong> <span id="productName"></span></p>
+        <p><strong>Quantity:</strong> <span id="quantity"></span></p>
+      </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script>
-        const data = {"_id":"67ed9b937a9d1254665170a4","data":[{"Industry":"Accounting/Finance"},{"Industry":"Advertising/Public Relations"},{"Industry":"Aerospace/Aviation"},{"Industry":"Arts/Entertainment/Publishing"},{"Industry":"Automotive"},{"Industry":"Banking/Mortgage"},{"Industry":"Business Development"},{"Industry":"Business Opportunity"},{"Industry":"Clerical/Administrative"},{"Industry":"Construction/Facilities"},{"Industry":"Consumer Goods"},{"Industry":"Customer Service"},{"Industry":"Education/Training"},{"Industry":"Energy/Utilities"},{"Industry":"Engineering"},{"Industry":"Government/Military"},{"Industry":"Green"},{"Industry":"Healthcare"},{"Industry":"Hospitality/Travel"},{"Industry":"Human Resources"},{"Industry":"Installation/Maintenance"},{"Industry":"Insurance"},{"Industry":"Internet"},{"Industry":"Job Search Aids"},{"Industry":"Law Enforcement/Security"},{"Industry":"Legal"},{"Industry":"Management/Executive"},{"Industry":"Manufacturing/Operations"},{"Industry":"Marketing"},{"Industry":"Non-Profit/Volunteer"},{"Industry":"Pharmaceutical/Biotech"},{"Industry":"Professional Services"},{"Industry":"QA/Quality Control"},{"Industry":"Real Estate"},{"Industry":"Restaurant/Food Service"},{"Industry":"Retail"},{"Industry":"Sales"},{"Industry":"Science/Research"},{"Industry":"Skilled Labor"},{"Industry":"Technology"},{"Industry":"Telecommunications"},{"Industry":"Transportation/Logistics"},{"Industry":"Other"}],"__v":0};      
+    <!-- Pie Chart -->
+    <div class="chart-container">
+      <h3>Region Breakdown</h3>
+      <canvas id="pieChart"></canvas>
+    </div>
 
-        const industries = data.data.map(item => item.Industry);
-        const chartData = industries.map(() => Math.floor(Math.random() * 100));
+    <!-- Line Chart -->
+    <div class="chart-container">
+      <h3>Sales Over Time</h3>
+      <canvas id="lineChart"></canvas>
+    </div>
 
-        const pieChartCanvas = document.getElementById('pieChart').getContext('2d');
-        const lineChartCanvas = document.getElementById('lineChart').getContext('2d');
-        const barChartCanvas = document.getElementById('barChart').getContext('2d');
+    <!-- Filters -->
+    <div class="filter-container">
+      <label for="regionSelect">Region:</label>
+      <select id="regionSelect">
+        <option value="all">All</option>
+        <option value="East">East</option>
+        <option value="West">West</option>
+        <option value="Central">Central</option>
+      </select>
 
-        const pieChart = new Chart(pieChartCanvas, {
-            type: 'pie',
-            data: {
-                labels: industries,
-                datasets: [{
-                    label: 'Industries',
-                    data: chartData,
-                    backgroundColor: [
-                        'rgba(255, 99, 132, 0.2)',
-                        'rgba(54, 162, 235, 0.2)',
-                        'rgba(255, 206, 86, 0.2)',
-                        'rgba(75, 192, 192, 0.2)',
-                        'rgba(153, 102, 255, 0.2)',
-                        'rgba(255, 159, 64, 0.2)',
-                        'rgba(255, 99, 132, 0.2)',
-                        'rgba(54, 162, 235, 0.2)',
-                        'rgba(255, 206, 86, 0.2)',
-                        'rgba(75, 192, 192, 0.2)',
-                        'rgba(153, 102, 255, 0.2)',
-                        'rgba(255, 159, 64, 0.2)',
-                        'rgba(255, 99, 132, 0.2)',
-                        'rgba(54, 162, 235, 0.2)',
-                        'rgba(255, 206, 86, 0.2)',
-                        'rgba(75, 192, 192, 0.2)',
-                        'rgba(153, 102, 255, 0.2)',
-                        'rgba(255, 159, 64, 0.2)',
-                        'rgba(255, 99, 132, 0.2)',
-                        'rgba(54, 162, 235, 0.2)',
-                        'rgba(255, 206, 86, 0.2)',
-                        'rgba(75, 192, 192, 0.2)',
-                        'rgba(153, 102, 255, 0.2)',
-                        'rgba(255, 159, 64, 0.2)',
-                        'rgba(255, 99, 132, 0.2)',
-                        'rgba(54, 162, 235, 0.2)',
-                        'rgba(255, 206, 86, 0.2)',
-                        'rgba(75, 192, 192, 0.2)',
-                        'rgba(153, 102, 255, 0.2)',
-                        'rgba(255, 159, 64, 0.2)',
-                        'rgba(255, 99, 132, 0.2)',
-                        'rgba(54, 162, 235, 0.2)',
-                        'rgba(255, 206, 86, 0.2)',
-                        'rgba(75, 192, 192, 0.2)',
-                        'rgba(153, 102, 255, 0.2)',
-                        'rgba(255, 159, 64, 0.2)'
-                    ],
-                    borderColor: [
-                        'rgba(255, 99, 132, 1)',
-                        'rgba(54, 162, 235, 1)',
-                        'rgba(255, 206, 86, 1)',
-                        'rgba(75, 192, 192, 1)',
-                        'rgba(153, 102, 255, 1)',
-                        'rgba(255, 159, 64, 1)',
-                        'rgba(255, 99, 132, 1)',
-                        'rgba(54, 162, 235, 1)',
-                        'rgba(255, 206, 86, 1)',
-                        'rgba(75, 192, 192, 1)',
-                        'rgba(153, 102, 255, 1)',
-                        'rgba(255, 159, 64, 1)',
-                        'rgba(255, 99, 132, 1)',
-                        'rgba(54, 162, 235, 1)',
-                        'rgba(255, 206, 86, 1)',
-                        'rgba(75, 192, 192, 1)',
-                        'rgba(153, 102, 255, 1)',
-                        'rgba(255, 159, 64, 1)',
-                        'rgba(255, 99, 132, 1)',
-                        'rgba(54, 162, 235, 1)',
-                        'rgba(255, 206, 86, 1)',
-                        'rgba(75, 192, 192, 1)',
-                        'rgba(153, 102, 255, 1)',
-                        'rgba(255, 159, 64, 1)',
-                        'rgba(255, 99, 132, 1)',
-                        'rgba(54, 162, 235, 1)',
-                        'rgba(255, 206, 86, 1)',
-                        'rgba(75, 192, 192, 1)',
-                        'rgba(153, 102, 255, 1)',
-                        'rgba(255, 159, 64, 1)',
-                        'rgba(255, 99, 132, 1)',
-                        'rgba(54, 162, 235, 1)',
-                        'rgba(255, 206, 86, 1)',
-                        'rgba(75, 192, 192, 1)',
-                        'rgba(153, 102, 255, 1)',
-                        'rgba(255, 159, 64, 1)'
-                    ],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                title: {
-                    display: true,
-                    text: 'Industries'
-                }
-            }
+      <label for="statusSelect">Status:</label>
+      <select id="statusSelect">
+        <option value="all">All</option>
+        <option value="critical">Critical</option>
+        <option value="low">Low</option>
+        <option value="normal">Normal</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Chart.js Script -->
+  <script>
+    const ctxBar = document.getElementById('barChart').getContext('2d');
+    const ctxPie = document.getElementById('pieChart').getContext('2d');
+    const ctxLine = document.getElementById('lineChart').getContext('2d');
+
+    const barChart = new Chart(ctxBar, {
+      type: 'bar',
+      data: {
+        labels: [],
+        datasets: [{
+          label: 'Quantity',
+          data: [],
+          backgroundColor: '#f7931a'
+        }]
+      }
+    });
+
+    const pieChart = new Chart(ctxPie, {
+      type: 'pie',
+      data: {
+        labels: ['East', 'West', 'Central'],
+        datasets: [{
+          label: 'Number of Orders',
+          data: [0, 0, 0],
+          backgroundColor: ['#4e5cd8', '#1d9bf0', '#f7931a']
+        }]
+      }
+    });
+
+    const lineChart = new Chart(ctxLine, {
+      type: 'line',
+      data: {
+        labels: [],
+        datasets: [{
+          label: 'Sales',
+          data: [],
+          backgroundColor: 'rgba(78, 92, 216, 0.3)',
+          borderColor: 'rgba(78, 92, 216, 1)',
+          borderWidth: 1
+        }]
+      }
+    });
+
+    const fetchDataAndUpdateCharts = () => {
+      const regionFilter = document.getElementById('regionSelect').value;
+      const statusFilter = document.getElementById('statusSelect').value;
+
+      fetch('https://api.npoint.io/719d6e4f883b95a879fc')
+        .then(res => res.json())
+        .then(data => {
+          const filteredData = data.filter(item =>
+            (regionFilter === 'all' || item.region === regionFilter) &&
+            (statusFilter === 'all' || item.status === statusFilter)
+          );
+
+          // Bar Chart Update
+          const barLabels = [...new Set(filteredData.map(d => d.status))];
+          const barValues = barLabels.map(label =>
+            filteredData
+              .filter(d => d.status === label)
+              .reduce((sum, cur) => sum + parseInt(cur.quantity), 0)
+          );
+
+          barChart.data.labels = barLabels;
+          barChart.data.datasets[0].data = barValues;
+          barChart.update();
+
+          // Pie Chart Update
+          const regionCounts = { East: 0, West: 0, Central: 0 };
+          filteredData.forEach(item => {
+            regionCounts[item.region]++;
+          });
+
+          pieChart.data.datasets[0].data = [
+            regionCounts.East,
+            regionCounts.West,
+            regionCounts.Central
+          ];
+          pieChart.update();
+
+          // Line Chart Update
+          const lineLabels = [...new Set(filteredData.map(d => d.date))].sort();
+          const lineValues = lineLabels.map(date =>
+            filteredData
+              .filter(d => d.date === date)
+              .reduce((sum, cur) => sum + parseInt(cur.quantity), 0)
+          );
+
+          lineChart.data.labels = lineLabels;
+          lineChart.data.datasets[0].data = lineValues;
+          lineChart.update();
         });
+    };
 
-        const lineChart = new Chart(lineChartCanvas, {
-            type: 'line',
-            data: {
-                labels: industries,
-                datasets: [{
-                    label: 'Industries',
-                    data: chartData,
-                    backgroundColor: [
-                        'rgba(255, 99, 132, 0.2)'
-                    ],
-                    borderColor: [
-                        'rgba(255, 99, 132, 1)'
-                    ],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                title: {
-                    display: true,
-                    text: 'Industries'
-                }
-            }
-        });
+    // Fetch and load data initially
+    fetchDataAndUpdateCharts();
 
-        const barChart = new Chart(barChartCanvas, {
-            type: 'bar',
-            data: {
-                labels: industries,
-                datasets: [{
-                    label: 'Industries',
-                    data: chartData,
-                    backgroundColor: [
-                        'rgba(255, 99, 132, 0.2)'
-                    ],
-                    borderColor: [
-                        'rgba(255, 99, 132, 1)'
-                    ],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                title: {
-                    display: true,
-                    text: 'Industries'
-                }
-            }
-        });
-    </script>
+    // Update on filter change
+    document.getElementById('regionSelect').addEventListener('change', fetchDataAndUpdateCharts);
+    document.getElementById('statusSelect').addEventListener('change', fetchDataAndUpdateCharts);
+  </script>
 </body>
 </html>
