@@ -63,7 +63,7 @@ const dataModel = mongoose.model("Data", dataSchema);
 
 // Routes
 app.get("/", (req, res) => {
-  res.send("Welcome to the Dashboard Generator API");
+  res.sendFile(path.join(__dirname, "index.html"));
 });
 
 app.post("/", uploads.single("file"), async (req, res) => {
