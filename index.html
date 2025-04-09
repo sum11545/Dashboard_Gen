@@ -134,10 +134,10 @@
               body: JSON.stringify({ _id: ID }),
             });
 
-            const resultHtml = await dashboardRes.text();
-            newTab.document.open();
-            newTab.document.write(resultHtml);
-            newTab.document.close();
+            const resultHtml = await dashboardRes.json()
+            if(resultHtml.url){
+                newTab.document.write(resultHtml.url)
+            }
           } else {
             Swal.fire({
               icon: "error",
