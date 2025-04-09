@@ -136,7 +136,8 @@
 
             const resultHtml = await dashboardRes.json()
             if(resultHtml.url){
-                newTab.document.write(resultHtml.url)
+                newTab.location.href = resultHtml.url; // ✅ redirect the new tab to the final URL
+
             }
           } else {
             Swal.fire({
