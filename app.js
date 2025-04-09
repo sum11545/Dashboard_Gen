@@ -179,18 +179,9 @@ app.post("/dashboard", async (req, res) => {
       2
     )} 
     Understand the structure of this data and identify 5 key metrics or patterns that should be visualized for meaningful business or operational insights
-    Make sure each metric helps in drawing actionable conclusions
-    
+    Make sure each metric helps in drawing actionable conclusions.
     Step 2
-    Now build a single HTML file that Fetches data using await fetch('/Json/${_id}.json') and stores it in a variable .Waits for Plotly https://cdn.plot.ly/plotly-2.19.0.min.js to fully load before rendering .Dynamically uses the fetched data for plotting — do not hardcode any chart values Includes all 5 charts that were suggested in Step 1  
-    Displays a short meaningful insight below each chart explaining what it shows UI Requirements Use a modern glassmorphism UI design with a stylish background color using ${randomColor}  
-    The layout must be clean responsive and elegant  
-    Use card or grid-based layout with proper spacing  
-    Avoid oversized charts and maintain appropriate width and height for all screen sizes  
-    Wrap charts inside scrollable containers if needed  
-    Use modern web fonts subtle shadows rounded corners and hover effects for chart cards and buttons  
-    Ensure visual consistency and avoid overlapping or cluttered graphs  
-    Use appropriate chart types like scatter instead of line when needed  
+    Now build a single HTML file that Fetches data using await fetch('/Json/${_id}.json') and stores it in a variable .Waits for Plotly https://cdn.plot.ly/plotly-2.19.0.min.js to fully load before rendering .Dynamically uses the fetched data for plotting — do not hardcode any chart values Includes all 5 charts that were suggested in Step 1.Displays a short meaningful insight below each chart explaining what it shows. UI Requirements:Use a modern glassmorphism UI design with a stylish background color using ${randomColor}.The layout must be clean responsive and elegant.Use card or grid-based layout with proper spacing .Avoid oversized charts and maintain appropriate width and height for all screen sizes.Wrap charts inside scrollable containers if needed .Use modern web fonts subtle shadows rounded corners and hover effects for chart cards and buttons.Ensure visual consistency and avoid overlapping or cluttered graphs.Use appropriate chart types like scatter instead of line when needed  
     
     Output only the full HTML code for this with no extra explanation or comments
     
