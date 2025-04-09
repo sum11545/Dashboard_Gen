@@ -164,22 +164,52 @@ app.post("/dashboard", async (req, res) => {
     ];
 
     const randomColor = randomBg[Math.floor(Math.random() * randomBg.length)];
-    const prompt = `Step 1
-    You are given this dataset in JSON format: ${JSON.stringify(
-      sampleData,
-      null,
-      2
-    )} 
-    Analyze the structure of the dataset and infer its type — for example, sales data, customer analytics, employee records, etc.
-Step 2:Based on the dataset type, generate: A clear and meaningful dashboard title.A short summary paragraph (3-4 lines) describing what the dataset represents and what insights can be expected.
-Step 3:Identify and calculate 5 key KPIs
-Step 4:Determine 5 insightful visualizations based on trends, patterns, or categories in the dataset. Choose the most suitable chart types.
-Step 5:Now build a single HTML file that Fetches data using await fetch('/Json/${_id}.json') and stores it in a variable .Waits for Chart.js (\`https://cdn.jsdelivr.net/npm/chart.js\`) to fully load before rendering.Dynamically uses the fetched data for plotting — do not hardcode any chart values Includes all 5 charts that were suggested in Step 4 Displays a short, meaningful insight below each chart explaining its significance.A responsive grid of 5 KPI cards form Step 3.Each card includes: Metric title (e.g., "Total Users"),Metric value,(Optional) small trend/indicator
-Use a modern glassmorphism UI design with a stylish background color using ${randomColor}. Use modern web fonts like Poppins, Inter, or Roboto.Ensure the layout is clean, responsive, and elegant.Use card or grid-based layout with proper spacing .Avoid oversized charts and maintain appropriate width and height for all screen sizes. Use modern web fonts, subtle shadows, rounded corners, and hover effects for chart cards and buttons.Ensure visual consistency and avoid overlapping or cluttered graphs.Select the most suitable chart types for clarity.
-    
-    Output only the full HTML code for this with no extra explanation or comments
-    
-    `;
+    const prompt = `Step1
+You are given this dataset in JSON format
+${JSON.stringify(sampleData, null, 2)}
+
+Step2
+Analyze the structure of the dataset and infer its type such as sales data customer analytics employee records etc
+Then generate a clear dashboard title and a short summary paragraph of 3 to 4 lines that explains what the dataset is about and what kind of insights it offers
+
+Step3
+Identify and calculate 5 key KPIs from the dataset
+Each KPI should be relevant to the data context useful for decision making and dynamically computed
+
+Step4
+Determine 5 insightful data visualizations using the dataset
+Choose the most suitable chart types for each pattern trend or category
+Each chart must include a chart title and a short explanation of the insight it reveals
+
+Step5
+Build a single HTML file that does the following
+Fetches the data dynamically using await fetch('/Json/${_id}.json') and stores it in a variable
+Waits for Chartjs to fully load from https://cdn.jsdelivr.net/npm/chart.js before rendering
+Renders all KPIs and charts dynamically without hardcoding any values
+
+LayoutStructure
+TopSection
+Display the dashboard title and dataset summary at the top of the dashboard
+
+KPISection
+Render a responsive grid of 5 KPI cards
+Each card must include the KPI title KPI value and an optional trend indicator or visual icon
+
+ChartSection
+Render 5 charts in a responsive grid layout
+Each chart should be inside a card with a title chart canvas and a short insight below
+
+UIRequirements
+Use a modern glassmorphism UI design with a stylish background color using ${randomColor}
+Use modern web fonts like Poppins Inter or Roboto
+Ensure a clean responsive and elegant layout using card or grid-based structure
+Apply subtle shadows rounded corners and hover effects to chart cards and buttons
+Ensure all elements are visually consistent with no overlap or clutter
+Maintain good spacing and readability across all screen sizes
+
+Output
+Only output the full HTML code for this without any extra explanation or comments
+`;
 
     const response = await fetch(
       "https://api.groq.com/openai/v1/chat/completions",
