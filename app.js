@@ -149,28 +149,20 @@ app.post("/dashboard", async (req, res) => {
     console.log(sampleData);
 
     const randomBg = [
-      "Slate Gray",
-      "Midnight Purple",
-      "Dark Navy",
-      "Charcoal Black",
-      "Soft Gradient", // Assuming it's a custom gradient you made
-      "Deep Teal",
-      "Gunmetal",
-      "Steel Blue",
-      "Space Black",
-      "Obsidian",
-      "Electric Indigo",
-      "Royal Blue",
-      "Crimson Red",
-      "Rose Quartz",
-      "Pine Green",
-      "Graphite Gray",
-      "Ocean Blue",
-      "Mystic Bronze",
-      "Frosted Glass", // for that pure glass feel
-      "Warm Sand",
-      "Aurora Fade", // name for custom gradient
+      "rgba(255, 255, 255, 0.7)", // Frosted White
+      "rgba(240, 248, 255, 0.6)", // Soft Blue Tint
+      "rgba(250, 250, 250, 0.75)", // Cloudy Silver
+      "rgba(245, 255, 250, 0.65)", // Mint Whisper
+      "rgba(255, 255, 240, 0.7)", // Creamy Glow
+      "rgba(240, 255, 255, 0.65)", // Icy Sky
+      "rgba(255, 250, 250, 0.8)", // Snow Mist
+      "rgba(253, 253, 253, 0.85)", // Pure Frost
+      "rgba(230, 240, 250, 0.65)", // Powder Blue
+      "rgba(245, 245, 255, 0.7)", // Lavender Haze
+      "rgba(255, 245, 238, 0.75)", // Peach Glass
+      "rgba(255, 255, 255, 0.6)", // Classic Glass
     ];
+
     const randomColor = randomBg[Math.floor(Math.random() * randomBg.length)];
     const prompt = `Step 1
     You are given this dataset in JSON format: ${JSON.stringify(
