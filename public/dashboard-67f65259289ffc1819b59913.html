@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Dashboard</title>
+    <script src="https://cdn.plot.ly/plotly-2.19.0.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #707070; /* Slate Gray */
+            margin: 0;
+            padding: 0;
+        }
+        .glassmorphism {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(5.8px);
+            -webkit-backdrop-filter: blur(5.8px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+        .chart {
+            padding: 20px;
+            border-radius: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container glassmorphism">
+        <div class="chart" id="chart1"></div>
+        <div class="chart" id="chart2"></div>
+        <div class="chart" id="chart3"></div>
+        <div class="chart" id="chart4"></div>
+        <div class="chart" id="chart5"></div>
+    </div>
+    <script>
+        async function fetchData() {
+            const response = await fetch('/Json/67f65259289ffc1819b59913.json');
+            return await response.json();
+        }
+
+        fetchData().then(data => {
+            const salesByCountry = {};
+            const salesByProduct = {};
+            const salesByDate = {};
+            const salesByPerson = {};
+            const boxesShippedByCountry = {};
+
+            data.forEach(item => {
+                if (!salesByCountry[item.Country]) {
+                    salesByCountry[item.Country] = 0;
+                }
+                salesByCountry[item.Country] += parseFloat(item.Amount.replace('$', '').replace(',', ''));
+
+                if (!salesByProduct[item.Product]) {
+                    salesByProduct[item.Product] = 0;
+                }
+                salesByProduct[item.Product] += parseFloat(item.Amount.replace('$', '').replace(',', ''));
+
+                if (!salesByDate[item.Date]) {
+                    salesByDate[item.Date] = 0;
+                }
+                salesByDate[item.Date] += parseFloat(item.Amount.replace('$', '').replace(',', ''));
+
+                if (!salesByPerson[item['Sales Person']]) {
+                    salesByPerson[item['Sales Person']] = 0;
+                }
+                salesByPerson[item['Sales Person']] += parseFloat(item.Amount.replace('$', '').replace(',', ''));
+
+                if (!boxesShippedByCountry[item.Country]) {
+                    boxesShippedByCountry[item.Country] = 0;
+                }
+                boxesShippedByCountry[item.Country] += parseFloat(item['Boxes Shipped']);
+            });
+
+            const countries = Object.keys(salesByCountry);
+            const products = Object.keys(salesByProduct);
+            const dates = Object.keys(salesByDate);
+            const persons = Object.keys(salesByPerson);
+
+            Plotly.newPlot('chart1', [
+                {
+                    x: countries,
+                    y: Object.values(salesByCountry),
+                    type: 'bar'
+                }
+            ], {
+                title: 'Sales by Country'
+            });
+
+            Plotly.newPlot('chart2', [
+                {
+                    x: products,
+                    y: Object.values(salesByProduct),
+                    type: 'bar'
+                }
+            ], {
+                title: 'Sales by Product'
+            });
+
+            Plotly.newPlot('chart3', [
+                {
+                    x: dates,
+                    y: Object.values(salesByDate),
+                    type: 'line'
+                }
+            ], {
+                title: 'Sales by Date'
+            });
+
+            Plotly.newPlot('chart4', [
+                {
+                    x: persons,
+                    y: Object.values(salesByPerson),
+                    type: 'bar'
+                }
+            ], {
+                title: 'Sales by Sales Person'
+            });
+
+            Plotly.newPlot('chart5', [
+                {
+                    x: Object.keys(boxesShippedByCountry),
+                    y: Object.values(boxesShippedByCountry),
+                    type: 'pie'
+                }
+            ], {
+                title: 'Boxes Shipped by Country'
+            });
+        });
+    </script>
+</body>
+</html>
+```

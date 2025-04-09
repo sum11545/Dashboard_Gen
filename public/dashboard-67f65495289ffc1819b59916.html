@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Dashboard</title>
+    <script src="https://cdn.plot.ly/plotly-2.19.0.min.js"></script>
+    <style>
+        body {
+            background-color: #008751; /* Pine Green */
+            font-family: Arial, sans-serif;
+        }
+        .glassmorphism {
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            padding: 20px;
+            width: 80%;
+            margin: 40px auto;
+        }
+        .charts {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+        }
+        .chart {
+            width: 45%;
+            margin: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="glassmorphism">
+        <h1>Employee Dashboard</h1>
+        <div class="charts" id="charts"></div>
+    </div>
+    <script>
+        async function fetchJSON() {
+            try {
+                const response = await fetch('/Json/67f65495289ffc1819b59916.json');
+                const jsonData = await response.json();
+                return jsonData;
+            } catch (error) {
+                console.error('Error fetching JSON:', error);
+                return [];
+            }
+        }
+
+        async function createDashboard() {
+            const data = await fetchJSON();
+
+            // Create histograms for Age and Salary
+            const ageHistogram = {
+                x: data.map(employee => employee.C),
+                type: 'histogram',
+                name: 'Age'
+            };
+            const salaryHistogram = {
+                x: data.map(employee => employee.F),
+                type: 'histogram',
+                name: 'Salary'
+            };
+
+            // Create bar chart for Department
+            const departmentBarChart = {
+                x: [...new Set(data.map(employee => employee.E))],
+                y: [...new Set(data.map(employee => employee.E))].map(department => data.filter(employee => employee.E === department).length),
+                type: 'bar',
+                name: 'Department'
+            };
+
+            // Create scatter plot for Age vs Salary
+            const ageVsSalaryScatterPlot = {
+                x: data.map(employee => employee.C),
+                y: data.map(employee => employee.F),
+                mode: 'markers',
+                type: 'scatter',
+                name: 'Age vs Salary'
+            };
+
+            // Create pie chart for Performance Score
+            const performanceScorePieChart = {
+                labels: [...new Set(data.map(employee => employee.H))],
+                values: [...new Set(data.map(employee => employee.H))].map(score => data.filter(employee => employee.H === score).length),
+                type: 'pie',
+                name: 'Performance Score'
+            };
+
+            // Create charts
+            const chartsDiv = document.getElementById('charts');
+            chartsDiv.innerHTML = '';
+            chartsDiv.innerHTML += `
+                <div class="chart">
+                    <h2>Age Distribution</h2>
+                    <div id="age-histogram"></div>
+                </div>
+                <div class="chart">
+                    <h2>Salary Distribution</h2>
+                    <div id="salary-histogram"></div>
+                </div>
+                <div class="chart">
+                    <h2>Department Distribution</h2>
+                    <div id="department-bar-chart"></div>
+                </div>
+                <div class="chart">
+                    <h2>Age vs Salary</h2>
+                    <div id="age-vs-salary-scatter-plot"></div>
+                </div>
+                <div class="chart">
+                    <h2>Performance Score Distribution</h2>
+                    <div id="performance-score-pie-chart"></div>
+                </div>
+            `;
+
+            // Plot charts
+            Plotly.newPlot('age-histogram', [ageHistogram], { title: 'Age Distribution' });
+            Plotly.newPlot('salary-histogram', [salaryHistogram], { title: 'Salary Distribution' });
+            Plotly.newPlot('department-bar-chart', [departmentBarChart], { title: 'Department Distribution' });
+            Plotly.newPlot('age-vs-salary-scatter-plot', [ageVsSalaryScatterPlot], { title: 'Age vs Salary', xaxis: { title: 'Age' }, yaxis: { title: 'Salary' } });
+            Plotly.newPlot('performance-score-pie-chart', [performanceScorePieChart], { title: 'Performance Score Distribution' });
+        }
+
+        createDashboard();
+    </script>
+</body>
+</html>
+```

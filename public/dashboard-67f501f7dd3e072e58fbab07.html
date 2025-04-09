@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Dashboard</title>
+    <script src="https://cdn.plot.ly/plotly-2.19.0.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #4169E1; /* Royal Blue */
+        }
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+        .glassmorphism {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+        .chart {
+            width: 100%;
+            height: 400px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 style="color: #fff; text-align: center;">Sales Dashboard</h1>
+        <div class="glassmorphism" id="sales-by-region"></div>
+        <div class="glassmorphism" id="sales-by-sales-rep"></div>
+        <div class="glassmorphism" id="sales-by-product-category"></div>
+        <div class="glassmorphism" id="sales-by-customer-type"></div>
+        <div class="glassmorphism" id="sales-trend"></div>
+    </div>
+
+    <script>
+        async function main() {
+            const response = await fetch('/Json/67f501f7dd3e072e58fbab07.json');
+            const data = await response.json();
+
+            // Sales by Region
+            const salesByRegion = {};
+            data.forEach(d => {
+                if (!salesByRegion[d.Region]) {
+                    salesByRegion[d.Region] = 0;
+                }
+                salesByRegion[d.Region] += parseFloat(d.Sales_Amount);
+            });
+            const regions = Object.keys(salesByRegion);
+            const sales = Object.values(salesByRegion);
+            const salesByRegionChart = {
+                data: [{
+                    x: regions,
+                    y: sales,
+                    type: 'bar'
+                }],
+                layout: {
+                    title: 'Sales by Region',
+                    xaxis: { title: 'Region' },
+                    yaxis: { title: 'Sales Amount' }
+                }
+            };
+            Plotly.newPlot('sales-by-region', salesByRegionChart.data, salesByRegionChart.layout);
+
+            // Sales by Sales Rep
+            const salesBySalesRep = {};
+            data.forEach(d => {
+                if (!salesBySalesRep[d.Sales_Rep]) {
+                    salesBySalesRep[d.Sales_Rep] = 0;
+                }
+                salesBySalesRep[d.Sales_Rep] += parseFloat(d.Sales_Amount);
+            });
+            const salesReps = Object.keys(salesBySalesRep);
+            const salesRepsSales = Object.values(salesBySalesRep);
+            const salesBySalesRepChart = {
+                data: [{
+                    x: salesReps,
+                    y: salesRepsSales,
+                    type: 'bar'
+                }],
+                layout: {
+                    title: 'Sales by Sales Rep',
+                    xaxis: { title: 'Sales Rep' },
+                    yaxis: { title: 'Sales Amount' }
+                }
+            };
+            Plotly.newPlot('sales-by-sales-rep', salesBySalesRepChart.data, salesBySalesRepChart.layout);
+
+            // Sales by Product Category
+            const salesByProductCategory = {};
+            data.forEach(d => {
+                if (!salesByProductCategory[d.Product_Category]) {
+                    salesByProductCategory[d.Product_Category] = 0;
+                }
+                salesByProductCategory[d.Product_Category] += parseFloat(d.Sales_Amount);
+            });
+            const productCategories = Object.keys(salesByProductCategory);
+            const productCategoriesSales = Object.values(salesByProductCategory);
+            const salesByProductCategoryChart = {
+                data: [{
+                    x: productCategories,
+                    y: productCategoriesSales,
+                    type: 'bar'
+                }],
+                layout: {
+                    title: 'Sales by Product Category',
+                    xaxis: { title: 'Product Category' },
+                    yaxis: { title: 'Sales Amount' }
+                }
+            };
+            Plotly.newPlot('sales-by-product-category', salesByProductCategoryChart.data, salesByProductCategoryChart.layout);
+
+            // Sales by Customer Type
+            const salesByCustomerType = {};
+            data.forEach(d => {
+                if (!salesByCustomerType[d.Customer_Type]) {
+                    salesByCustomerType[d.Customer_Type] = 0;
+                }
+                salesByCustomerType[d.Customer_Type] += parseFloat(d.Sales_Amount);
+            });
+            const customerTypes = Object.keys(salesByCustomerType);
+            const customerTypesSales = Object.values(salesByCustomerType);
+            const salesByCustomerTypeChart = {
+                data: [{
+                    x: customerTypes,
+                    y: customerTypesSales,
+                    type: 'bar'
+                }],
+                layout: {
+                    title: 'Sales by Customer Type',
+                    xaxis: { title: 'Customer Type' },
+                    yaxis: { title: 'Sales Amount' }
+                }
+            };
+            Plotly.newPlot('sales-by-customer-type', salesByCustomerTypeChart.data, salesByCustomerTypeChart.layout);
+
+            // Sales Trend
+            const dates = data.map(d => d.Sale_Date);
+            const salesAmounts = data.map(d => parseFloat(d.Sales_Amount));
+            const salesTrendChart = {
+                data: [{
+                    x: dates,
+                    y: salesAmounts,
+                    type: 'line'
+                }],
+                layout: {
+                    title: 'Sales Trend',
+                    xaxis: { title: 'Sale Date' },
+                    yaxis: { title: 'Sales Amount' }
+                }
+            };
+            Plotly.newPlot('sales-trend', salesTrendChart.data, salesTrendChart.layout);
+        }
+        main();
+    </script>
+</body>
+</html>
+```

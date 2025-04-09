@@ -1,0 +1,117 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Dashboard</title>
+    <style>
+        body {
+            background-color: #1a1d23; /* Dark Navy */
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+        .glassmorphism {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            margin: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="glassmorphism" id="bar-chart"></div>
+    <div class="glassmorphism" id="scatter-plot"></div>
+    <div class="glassmorphism" id="line-chart"></div>
+    <div class="glassmorphism" id="pie-chart"></div>
+    <div class="glassmorphism" id="histogram"></div>
+
+    <script src="https://cdn.plot.ly/plotly-2.19.0.min.js"></script>
+    <script>
+        fetch('/Json/67f4d938212026c8788c09b5.json')
+            .then(response => response.json())
+            .then(data => {
+                // Generate charts
+                let categories = data.map(item => item.category);
+                let values = data.map(item => item.value);
+                let scatterX = data.map(item => item.scatterX);
+                let scatterY = data.map(item => item.scatterY);
+                let lineX = data.map(item => item.lineX);
+                let lineY = data.map(item => item.lineY);
+                let pieLabels = data.map(item => item.pieLabel);
+                let pieValues = data.map(item => item.pieValue);
+                let histogramX = data.map(item => item.histogramX);
+
+                let barChart = {
+                    data: [{
+                        x: categories,
+                        y: values,
+                        type: 'bar'
+                    }],
+                    layout: {
+                        title: 'Bar Chart',
+                        xaxis: { title: 'Category' },
+                        yaxis: { title: 'Value' }
+                    }
+                };
+
+                let scatterPlot = {
+                    data: [{
+                        x: scatterX,
+                        y: scatterY,
+                        mode: 'markers',
+                        type: 'scatter'
+                    }],
+                    layout: {
+                        title: 'Scatter Plot',
+                        xaxis: { title: 'X' },
+                        yaxis: { title: 'Y' }
+                    }
+                };
+
+                let lineChart = {
+                    data: [{
+                        x: lineX,
+                        y: lineY,
+                        type: 'line'
+                    }],
+                    layout: {
+                        title: 'Line Chart',
+                        xaxis: { title: 'X' },
+                        yaxis: { title: 'Y' }
+                    }
+                };
+
+                let pieChart = {
+                    data: [{
+                        labels: pieLabels,
+                        values: pieValues,
+                        type: 'pie'
+                    }],
+                    layout: {
+                        title: 'Pie Chart'
+                    }
+                };
+
+                let histogram = {
+                    data: [{
+                        x: histogramX,
+                        type: 'histogram'
+                    }],
+                    layout: {
+                        title: 'Histogram',
+                        xaxis: { title: 'X' }
+                    }
+                };
+
+                Plotly.newPlot('bar-chart', barChart.data, barChart.layout);
+                Plotly.newPlot('scatter-plot', scatterPlot.data, scatterPlot.layout);
+                Plotly.newPlot('line-chart', lineChart.data, lineChart.layout);
+                Plotly.newPlot('pie-chart', pieChart.data, pieChart.layout);
+                Plotly.newPlot('histogram', histogram.data, histogram.layout);
+            });
+    </script>
+</body>
+</html>
+```

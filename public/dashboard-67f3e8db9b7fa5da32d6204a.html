@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sales Performance Dashboard</title>
+  <script src="https://cdn.plot.ly/plotly-2.19.0.min.js"></script>
+  <style>
+    body {
+      background: #708090;
+      font-family: Arial, sans-serif;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 40px auto;
+      padding: 20px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 20px;
+      backdrop-filter: blur(10px);
+    }
+    .card {
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 16px;
+      padding: 20px;
+      margin: 20px 0;
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1 style="color:white; text-align:center;">Sales Performance Dashboard</h1>
+    <div class="card" id="sales-by-city"></div>
+    <div class="card" id="sales-by-product"></div>
+    <div class="card" id="sales-trend"></div>
+    <div class="card" id="sales-by-gender"></div>
+    <div class="card" id="sales-by-quarter"></div>
+  </div>
+
+  <script>
+    fetch('/Json/67f3e8db9b7fa5da32d6204a.json')
+      .then(res => res.json())
+      .then(data => {
+        const salesByCity = {};
+        const salesByProduct = {};
+        const salesByDate = {};
+        const salesByGender = {};
+        const salesByQuarter = {};
+
+        data.forEach(entry => {
+          const city = entry.City;
+          const product = entry["Product line"];
+          const gender = entry.Gender;
+          const total = parseFloat(entry.Total);
+          const date = entry.Date;
+          const quarter = getQuarter(date);
+
+          salesByCity[city] = (salesByCity[city] || 0) + total;
+          salesByProduct[product] = (salesByProduct[product] || 0) + total;
+          salesByGender[gender] = (salesByGender[gender] || 0) + total;
+          salesByDate[date] = (salesByDate[date] || 0) + total;
+          salesByQuarter[quarter] = (salesByQuarter[quarter] || 0) + total;
+        });
+
+        plotChart("sales-by-city", "Sales by City", salesByCity);
+        plotChart("sales-by-product", "Sales by Product Line", salesByProduct);
+        plotChart("sales-trend", "Sales Trend", salesByDate, "line");
+        plotChart("sales-by-gender", "Sales by Gender", salesByGender);
+        plotChart("sales-by-quarter", "Sales by Quarter", salesByQuarter);
+      });
+
+    function getQuarter(dateStr) {
+      const parts = dateStr.split("-"); // Format is dd-mm-yyyy
+      const month = parseInt(parts[1]);
+      if (month <= 3) return "Q1";
+      if (month <= 6) return "Q2";
+      if (month <= 9) return "Q3";
+      return "Q4";
+    }
+
+    function plotChart(id, title, data, type = "bar") {
+      const x = Object.keys(data);
+      const y = Object.values(data);
+
+      const layout = {
+        title,
+        xaxis: { title: x.length > 12 ? "" : "Category" },
+        yaxis: { title: "Sales" }
+      };
+
+      Plotly.newPlot(id, [{ x, y, type }], layout);
+    }
+  </script>
+</body>
+</html>

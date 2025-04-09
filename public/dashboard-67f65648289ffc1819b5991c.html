@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Dashboard</title>
+    <script src="https://cdn.plot.ly/plotly-2.19.0.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #032B44; /* Ocean Blue */
+            margin: 0;
+            padding: 0;
+        }
+        .glassmorphism {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            width: 90%;
+            margin: 20px auto;
+            backdrop-filter: blur(10px);
+        }
+        .charts {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .chart {
+            margin: 20px;
+            padding: 20px;
+            width: 45%;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+        }
+    </style>
+</head>
+<body>
+    <div class="glassmorphism">
+        <h1 style="color: #fff; text-align: center;">Interactive Dashboard</h1>
+        <div class="charts" id="charts"></div>
+    </div>
+
+    <script>
+        async function fetchData() {
+            const response = await fetch('/Json/67f65648289ffc1819b5991c.json');
+            const data = await response.json();
+            return data;
+        }
+
+        async function createDashboard() {
+            const data = await fetchData();
+
+            const ages = data.map(item => item.C);
+            const salaries = data.map(item => item.F);
+            const performanceScores = data.map(item => item.H);
+            const departments = data.map(item => item.E);
+            const agesCount = {};
+            const departmentsCount = {};
+
+            ages.forEach(age => {
+                agesCount[age] = (agesCount[age]  0) + 1;
+            });
+
+            departments.forEach(department => {
+                departmentsCount[department] = (departmentsCount[department]  0) + 1;
+            });
+
+            const ageDistribution = {
+                x: Object.keys(agesCount),
+                y: Object.values(agesCount),
+                type: 'bar'
+            };
+
+            const salaryDistribution = {
+                x: data.map(item => item.B),
+                y: salaries,
+                type: 'bar'
+            };
+
+            const performanceScoreDistribution = {
+                x: data.map(item => item.B),
+                y: performanceScores,
+                type: 'bar'
+            };
+
+            const departmentDistribution = {
+                values: Object.values(departmentsCount),
+                labels: Object.keys(departmentsCount),
+                type: 'pie'
+            };
+
+            const averageSalaryByDepartment = {};
+            data.forEach(item => {
+                if (!averageSalaryByDepartment[item.E]) {
+                    averageSalaryByDepartment[item.E] = [];
+                }
+                averageSalaryByDepartment[item.E].push(item.F);
+            });
+
+            const averageSalaries = Object.keys(averageSalaryByDepartment).map(department => {
+                const sum = averageSalaryByDepartment[department].reduce((a, b) => a + b, 0);
+                return sum / averageSalaryByDepartment[department].length;
+            });
+
+            const averageSalaryByDepartmentDistribution = {
+                x: Object.keys(averageSalaryByDepartment),
+                y: averageSalaries,
+                type: 'bar'
+            };
+
+            const charts = document.getElementById('charts');
+
+            Plotly.newPlot(charts, [ageDistribution], {
+                title: 'Age Distribution',
+                xaxis: { title: 'Age' },
+                yaxis: { title: 'Count' }
+            }, { responsive: true });
+
+            Plotly.newPlot(charts, [salaryDistribution], {
+                title: 'Salary Distribution',
+                xaxis: { title: 'Name', tickangle: 90 },
+                yaxis: { title: 'Salary' }
+            }, { responsive: true });
+
+            Plotly.newPlot(charts, [performanceScoreDistribution], {
+                title: 'Performance Score Distribution',
+                xaxis: { title: 'Name', tickangle: 90 },
+                yaxis: { title: 'Performance Score' }
+            }, { responsive: true });
+
+            Plotly.newPlot(charts, [departmentDistribution], {
+                title: 'Department Distribution'
+            }, { responsive: true });
+
+            Plotly.newPlot(charts, [averageSalaryByDepartmentDistribution], {
+                title: 'Average Salary by Department',
+                xaxis: { title: 'Department' },
+                yaxis: { title: 'Average Salary' }
+            }, { responsive: true });
+        }
+
+        createDashboard();
+    </script>
+</body>
+</html>
+```

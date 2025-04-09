@@ -1,166 +1,3 @@
-// const express = require("express");
-// const app = express();
-// require("dotenv").config();
-// const port = process.env.PORT || 3000;
-// const multer = require("multer");
-// const excelToJson = require("convert-excel-to-json");
-// const csvToJson = require("csvtojson");
-// const mongoose = require("mongoose");
-// const fs = require("fs");
-// const Groq = require("groq-sdk");
-// const fetch = require("node-fetch");
-
-// app.use(express.json());
-
-// const storage = multer.diskStorage({
-//   destination: (req, file, cb) => {
-//     cb(null, "./uploads");
-//   },
-//   filename: (req, file, cb) => {
-//     cb(null, Date.now() + "_" + file.originalname);
-//   },
-// });
-// const uploads = multer({
-//   storage: storage,
-//   limits: { fileSize: 50000000 },
-//   fileFilter: (req, file, cb) => {
-//     const allowedMimeTypes = [
-//       "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", // .xlsx
-//       "application/vnd.ms-excel", // .xls
-//       "text/csv", // .csv
-//     ];
-
-//     if (allowedMimeTypes.includes(file.mimetype)) {
-//       cb(null, true);
-//     } else {
-//       cb(null, false);
-//       cb(new Error("Invaild Type Of File"));
-//     }
-//   },
-// });
-
-// mongoose
-//   .connect("mongodb://localhost:27017/Dashboard_Gen", {})
-//   .then(() => {
-//     console.log("Connected to MongoDB");
-//   })
-//   .catch((err) => {
-//     console.log(err);
-//   });
-
-// const dataSchema = mongoose.Schema({}, { strict: false });
-// const dataModel = mongoose.model("Data", dataSchema);
-
-// app.get("/", (req, res) => {
-//   res.send("Hello World!");
-// });
-
-// app.post("/", uploads.single("file"), async (req, res) => {
-//   const file = req.file;
-//   console.log(file);
-//   let parsedData = [];
-//   let format = "";
-
-//   if (
-//     file.mimetype ==
-//     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-//   ) {
-//     format = "Excel";
-//     const result = await excelToJson({
-//       sourceFile: file.path,
-//     });
-
-//     const newSchema = new dataModel({
-//       data: result,
-//     });
-
-//     const saveData = await newSchema.save();
-//     if (saveData) {
-//       fs.unlink(file.path, (err) => {
-//         if (err) console.log(err);
-//         else console.log("File deleted");
-//       });
-//     }
-//     const ids = saveData._id.toString();
-//     const match = ids.match(/[0-9a-fA-F]{24}/);
-//     const id = match[0];
-//     res.json({ id: id });
-
-//     console.log("Excel Type called");
-//   } else if (file.mimetype == "text/csv") {
-//     format = "CSV";
-//     const result = await csvToJson().fromFile(file.path);
-
-//     console.log(result);
-
-//     const newDocument = new dataModel({ data: result });
-
-//     const saveData = await newDocument.save();
-//     console.log("Saved data:", saveData);
-
-//     if (saveData) {
-//       fs.unlink(file.path, (err) => {
-//         if (err) console.log(err);
-//         else console.log("File deleted");
-//       });
-//     }
-//     console.log(saveData._id);
-//     const ids = saveData._id.toString();
-//     const match = ids.match(/[0-9a-fA-F]{24}/);
-//     const id = match[0];
-//     res.json({ id: id });
-
-//     console.log("CSV type is called");
-//     res.json({
-//       message: "CSV file uploaded and saved to MongoDB",
-//       data: result,
-//     });
-//   }
-// });
-
-// app.post("/dashboard", async (req, res) => {
-//   const { _id, propmt } = req.body;
-//   console.log(_id);
-//   console.log("prompt is", propmt);
-
-//   const data = await dataModel.findOne({ _id }).exec();
-//   console.log(data);
-//   const stringifiedData = JSON.stringify(data, null, 2);
-
-//   const response = await fetch(`http://localhost:11434/api/generate`, {
-//     method: "POST",
-//     headers: {
-//       "Content-Type": "application/json",
-//       // Authorization: `Bearer ${apikey}`,
-//     },
-//     body: JSON.stringify({
-//       model: "mixtral:8x7b",
-//       prompt: `Generate a complete interactive data visualization dashboard in a single HTML, CSS, and JavaScript file using the following dataset: ${stringifiedData}. The dashboard should include multiple charts (bar, pie, and line charts), colorful text labels, filters, and tooltips for better user interaction. Use Chart.js or D3.js for charts, and ensure the UI has a modern, clean, and responsive design. Avoid extra explanations or working methods—only provide the complete code in one file.`,
-//       stream: false,
-//     }),
-//   });
-
-//   const datas = await response.json();
-//   console.log(datas);
-
-//   // const newDatas = datas.choices[0].message.content;
-//   // console.log(newDatas);
-
-//   // const regex = /<!DOCTYPE html>[\s\S]*?<\/html>/; // Corrected regex
-//   // const match = newDatas.match(regex); // Apply match on newDatas
-//   // if (match) {
-//   //   const code = match[0];
-//   //   console.log(code);
-//   //   res.json({
-//   //     message: "Data fetched from MongoDB and sent to Groq API",
-//   //     data: code,
-//   //   });
-//   // }
-// });
-// app.listen(port, () => {
-//   console.log(`Server is running on port ${port}`);
-// });
-
 const express = require("express");
 const app = express();
 require("dotenv").config();
@@ -172,10 +9,16 @@ const mongoose = require("mongoose");
 const fs = require("fs");
 const fetch = require("node-fetch");
 const path = require("path");
-
-// Serve public folder
-app.use(express.static("public"));
+const cors = require("cors");
+app.use(
+  cors({
+    origin: "*",
+    methods: ["GET", "POST"],
+  })
+);
 app.use(express.json());
+app.use("/Json", express.static(path.join(__dirname, "Json")));
+app.use(express.static("public"));
 
 // Uploads folder setup
 const storage = multer.diskStorage({
@@ -205,9 +48,9 @@ const uploads = multer({
 
 // MongoDB setup
 mongoose
-  .connect("mongodb://localhost:27017/Dashboard_Gen")
-  .then(() => console.log("✅ MongoDB connected"))
-  .catch((err) => console.error("❌ MongoDB error:", err));
+  .connect(process.env.MONGO_URI, {})
+  .then(() => console.log(" MongoDB connected"))
+  .catch((err) => console.error(" MongoDB error:", err));
 
 const dataSchema = mongoose.Schema(
   {
@@ -225,6 +68,8 @@ app.get("/", (req, res) => {
 
 app.post("/", uploads.single("file"), async (req, res) => {
   const file = req.file;
+  console.log(file);
+
   console.log("📁 File uploaded:", file.originalname);
   let parsedData;
 
@@ -236,77 +81,214 @@ app.post("/", uploads.single("file"), async (req, res) => {
       const result = excelToJson({
         sourceFile: file.path,
       });
-      parsedData = result;
+      let firstSheetName = Object.keys(result)[0];
+      // Store in MongoDB
+      const newData = new dataModel({ data: result });
+      await newData.save();
+
       console.log("🧾 Excel parsed");
-    } else if (file.mimetype === "text/csv") {
-      parsedData = await csvToJson().fromFile(file.path);
-      console.log("🧾 CSV parsed");
+
+      // Delete uploaded file
+      fs.unlink(file.path, (err) =>
+        err ? console.error(err) : console.log("🧹 File deleted")
+      );
+
+      return res.json({
+        message: "File uploaded and parsed data saved to MongoDB",
+        _id: newData._id,
+        sheetname: firstSheetName,
+      });
     }
 
-    const doc = new dataModel({ data: parsedData });
-    const saved = await doc.save();
-    const id = saved._id.toString();
+    // CSV Parsing (kept separately)
+    if (file.mimetype === "text/csv") {
+      parsedData = await csvToJson().fromFile(file.path);
+      console.log("🧾 CSV parsed");
+      let firstSheetName = [parsedData[0]];
+      const doc = new dataModel({ data: parsedData });
+      const saved = await doc.save();
+      const id = saved._id.toString();
 
-    // Delete uploaded file
-    fs.unlink(file.path, (err) =>
-      err ? console.error(err) : console.log("🧹 File deleted")
-    );
+      // Delete uploaded file
+      fs.unlink(file.path, (err) =>
+        err ? console.error(err) : console.log("🧹 File deleted")
+      );
 
-    res.json({ message: "✅ File parsed & saved", id });
+      return res.json({
+        message: "CSV uploaded and saved to MongoDB",
+        _id: id,
+      });
+    }
   } catch (err) {
     console.error("❌ Error:", err);
     res.status(500).json({ error: "Server error" });
   }
 });
 
+const apiKey = process.env.GROQ_API_KEY;
+const anApi = process.env.GROQ_API;
 app.post("/dashboard", async (req, res) => {
-  const { _id, prompt } = req.body;
+  const { _id } = req.body;
   console.log("📩 Request for dashboard:", _id);
 
   try {
-    const data = await dataModel.findById(_id);
+    const data = await dataModel.findOne({ _id });
     if (!data) return res.status(404).json({ error: "Data not found" });
+    const sheetData = data.data;
+    let cleanData = Array.isArray(sheetData)
+      ? sheetData
+      : typeof sheetData === "object"
+      ? sheetData[Object.keys(sheetData)[0]]
+      : (() => {
+          throw new Error("Unexpected data format.");
+        })();
 
-    const stringifiedData = JSON.stringify(data.data, null, 2);
+    const filepath = path.join(__dirname, "Json", `${_id}.json`);
+    fs.writeFileSync(filepath, JSON.stringify(cleanData, null, 2));
+    const sampleData = [cleanData[0]];
+    console.log(sampleData);
 
-    const fullPrompt = `
-      Generate a complete interactive data visualization dashboard in a single HTML, CSS, and JavaScript file using the following dataset:
-      ${stringifiedData}
-      The dashboard should include multiple charts (bar, pie, and line charts), colorful text labels, filters, and tooltips.
-      Use Chart.js or D3.js. The design should be modern, responsive, and clean.
-      Do not include explanations — just return valid full HTML code.
-      ${prompt || ""}
-    `;
+    const randomBg = [
+      "Slate Gray",
+      "Midnight Purple",
+      "Dark Navy",
+      "Charcoal Black",
+      "Soft Gradient", // Assuming it's a custom gradient you made
+      "Deep Teal",
+      "Gunmetal",
+      "Steel Blue",
+      "Space Black",
+      "Obsidian",
+      "Electric Indigo",
+      "Royal Blue",
+      "Crimson Red",
+      "Rose Quartz",
+      "Pine Green",
+      "Graphite Gray",
+      "Ocean Blue",
+      "Mystic Bronze",
+      "Frosted Glass", // for that pure glass feel
+      "Warm Sand",
+      "Aurora Fade", // name for custom gradient
+    ];
+    const randomColor = randomBg[Math.floor(Math.random() * randomBg.length)];
+    const promt = `Step-1 This is the structure of ${JSON.stringify(
+      sampleData,
+      null,
+      2
+    )} data in JSON format.  Understand the structure and suggest five key data visualization metrics that would be the best fit to create an interactive dashboard.
+    Step-2 now Create a single HTML file that displays All five data visualization which you had tell in step 1. Use the Plotly CDN (https://cdn.plot.ly/plotly-2.19.0.min.js).Use await fetch() to get JSON data from /Json/${_id}.json and store it in a variable. The JSON contains an array of objects.Only plot graphs after data is successfully fetched and Plotly is fully loaded. Do not hardcode any chart data.Use the fetched data variable in all charts. Apply a modern glassmorphism UI with background color ${randomColor}. Layout must be clean, responsive, well-spaced, and stylish. Output only the full HTML — no explanation.`;
 
-    const response = await fetch(`http://localhost:11434/api/generate`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        model: "mixtral:8x7b",
-        prompt: fullPrompt,
-        stream: false,
-      }),
-    });
-
-    const result = await response.json();
-    const code = result.response;
-
+    const response = await fetch(
+      "https://api.groq.com/openai/v1/chat/completions",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify({
+          model: "llama-3.3-70b-versatile",
+          messages: [
+            {
+              role: "user",
+              content: promt,
+            },
+          ],
+        }),
+      }
+    );
+    const datas = await response.json();
+    const output = datas.choices[0].message.content;
+    const cleanedOutput = output.replace(/```html\n|\|/g, "");
     const fileName = `dashboard-${_id}.html`;
     const filePath = path.join(__dirname, "public", fileName);
-
-    fs.writeFileSync(filePath, code);
+    fs.writeFileSync(filePath, cleanedOutput);
     console.log("✅ Dashboard saved:", fileName);
-
+    console.log("By Non Prompt Dashboard is called");
     res.json({
       message: "✅ Dashboard generated",
       url: `http://${req.headers.host}/${fileName}`,
     });
+
+    // const result = await model.generate({ fullPrompt, data: data.data });
+
+    // 🔍 Determine what to chunk
+
+    // const finalResponse = await result.response;
+    // const finalDashboard = finalResponse.text();
+
+    // // console.log("✅ Final merged dashboard ready!");
+
+    // // const fileName = `dashboard-${_id}.html`;
+    // // const filePath = path.join(__dirname, "public", fileName);
+    // // fs.writeFileSync(filePath, finalDashboard);
+    // // console.log("✅ Dashboard saved:", fileName);
+
+    // res.json({
+    //   message: "✅ Dashboard generated",
+    //   url: `http://${req.headers.host}/${fileName}`,
+    //   data: finalDashboard,
+    // });
   } catch (err) {
     console.error("❌ Error in /dashboard:", err);
     res.status(500).json({ error: "Dashboard generation failed" });
   }
 });
 
+app.post("/userupdate", async (req, res) => {
+  const { _id, prompt } = req.body;
+
+  const filename = `dashboard-${_id}.html`;
+  const filePath = path.join(__dirname, "public", filename);
+  try {
+    if (!fs.existsSync(filePath)) {
+      return res.status(404).json({ error: "Original dashboard not found." });
+    }
+    const oldHTML = fs.readFileSync(filePath, "utf-8");
+    const updatePrompt = `Here's the current dashboard HTML:\n${oldHTML}\n The User wants the following changes ${prompt} Please return the updated full HTML with changes .Keep the original logic and Layout unless specified.output only the new HTML CSS JS , no explanation `;
+
+    const response = await fetch(
+      "https://api.groq.com/openai/v1/chat/completions",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${anApi}`,
+        },
+        body: JSON.stringify({
+          model: "llama-3.3-70b-versatile",
+          messages: [
+            {
+              role: "user",
+              content: updatePrompt,
+            },
+          ],
+        }),
+      }
+    );
+
+    const datas = await response.json();
+    const updatedOutput = datas.choices[0].message.content;
+    const cleanedOutput = updatedOutput.replace(/```html\n|\|/g, "");
+
+    // Save new version (or overwrite)
+    const updatedFileName = `dashboard-${_id}-v2.html`;
+    const updatedFilePath = path.join(__dirname, "public", updatedFileName);
+    fs.writeFileSync(updatedFilePath, cleanedOutput);
+
+    res.json({
+      message: "✅ Dashboard updated successfully",
+      url: `http://${req.headers.host}/${updatedFileName}`,
+    });
+  } catch (error) {
+    res.json({
+      msg: "Error In updating Dashboard",
+      error,
+    });
+  }
+});
+
 app.listen(port, () => {
-  console.log(`🚀 Server running at http://localhost:${port}`);
+  console.log(` Server running at ${port}`);
 });

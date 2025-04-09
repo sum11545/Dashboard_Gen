@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: linear-gradient(to bottom right, #c9d7f7, #ffffff);
+            background-attachment: fixed;
+            background-size: 100% 100%;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+        .card {
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px;
+        }
+        .glass {
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 style="text-align: center;">Interactive Dashboard</h1>
+        <div class="card glass" id="card1"></div>
+        <div class="card glass" id="card2"></div>
+        <div class="card glass" id="card3"></div>
+        <div class="card glass" id="card4"></div>
+        <div class="card glass" id="card5"></div>
+    </div>
+
+    <script src="https://cdn.plot.ly/plotly-2.19.0.min.js"></script>
+    <script>
+        let data;
+        async function fetchData() {
+            await fetch('/Json/67f65544289ffc1819b59919.json')
+                .then(response => response.json())
+                .then(json => data = json);
+        }
+
+        async function plotGraphs() {
+            await fetchData();
+            const ids = data.map(item => item.A);
+            const names = data.map(item => item.B);
+            const ages = data.map(item => parseInt(item.C));
+            const salaries = data.map(item => parseInt(item.F));
+            const performanceScores = data.map(item => parseInt(item.H));
+
+            const ageTrace = {
+                x: names,
+                y: ages,
+                type: 'bar'
+            };
+
+            const salaryTrace = {
+                x: names,
+                y: salaries,
+                type: 'bar'
+            };
+
+            const performanceScoreTrace = {
+                x: names,
+                y: performanceScores,
+                type: 'bar'
+            };
+
+            const departmentCount = {};
+            data.forEach(item => {
+                if (!departmentCount[item.E]) {
+                    departmentCount[item.E] = 0;
+                }
+                departmentCount[item.E]++;
+            });
+
+            const departmentTrace = {
+                values: Object.values(departmentCount),
+                labels: Object.keys(departmentCount),
+                type: 'pie'
+            };
+
+            const topPerformers = data.sort((a, b) => b.H - a.H).slice(0, 5);
+            const topPerformerNames = topPerformers.map(item => item.B);
+            const topPerformerScores = topPerformers.map(item => parseInt(item.H));
+
+            const topPerformerTrace = {
+                x: topPerformerNames,
+                y: topPerformerScores,
+                type: 'bar'
+            };
+
+            Plotly.newPlot('card1', [ageTrace], {
+                title: 'Age Distribution',
+                xaxis: { title: 'Name' },
+                yaxis: { title: 'Age' }
+            });
+
+            Plotly.newPlot('card2', [salaryTrace], {
+                title: 'Salary Distribution',
+                xaxis: { title: 'Name' },
+                yaxis: { title: 'Salary' }
+            });
+
+            Plotly.newPlot('card3', [performanceScoreTrace], {
+                title: 'Performance Score Distribution',
+                xaxis: { title: 'Name' },
+                yaxis: { title: 'Performance Score' }
+            });
+
+            Plotly.newPlot('card4', [departmentTrace], {
+                title: 'Department Distribution',
+                height: 400,
+                width: 400
+            });
+
+            Plotly.newPlot('card5', [topPerformerTrace], {
+                title: 'Top 5 Performers',
+                xaxis: { title: 'Name' },
+                yaxis: { title: 'Performance Score' }
+            });
+        }
+
+        plotGraphs();
+    </script>
+</body>
+</html>
+```

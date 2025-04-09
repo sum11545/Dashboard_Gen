@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Visualization Dashboard</title>
+    <script src="https://cdn.plot.ly/plotly-2.19.0.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #2ecc71; /* Pine Green */
+        }
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+        .header {
+            text-align: center;
+            color: #fff;
+        }
+        .charts {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+        }
+        .chart {
+            margin: 20px;
+            width: calc(33.33% - 20px);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Data Visualization Dashboard</h1>
+        </div>
+        <div class="charts" id="charts"></div>
+    </div>
+
+    <script>
+        async function fetchAndPlot() {
+            const response = await fetch('/Json/67f64f106012a6e243cbcf1b.json');
+            const data = await response.json();
+
+            // 1. Bar Chart: Sales Amount by Region
+            const salesAmountByRegion = {};
+            data.forEach(d => {
+                if (!salesAmountByRegion[d.Region]) {
+                    salesAmountByRegion[d.Region] = 0;
+                }
+                salesAmountByRegion[d.Region] += parseFloat(d.Sales_Amount);
+            });
+            const regions = Object.keys(salesAmountByRegion);
+            const salesAmounts = Object.values(salesAmountByRegion);
+            Plotly.newPlot('sales-amount-by-region', [{ x: regions, y: salesAmounts, type: 'bar' }], { title: 'Sales Amount by Region' });
+
+            // 2. Pie Chart: Product Category Distribution
+            const productCategoryDistribution = {};
+            data.forEach(d => {
+                if (!productCategoryDistribution[d.Product_Category]) {
+                    productCategoryDistribution[d.Product_Category] = 0;
+                }
+                productCategoryDistribution[d.Product_Category]++;
+            });
+            const categories = Object.keys(productCategoryDistribution);
+            const counts = Object.values(productCategoryDistribution);
+            Plotly.newPlot('product-category-distribution', [{ values: counts, labels: categories, type: 'pie' }], { title: 'Product Category Distribution' });
+
+            // 3. Line Chart: Sales Amount Over Time
+            const salesAmountOverTime = {};
+            data.forEach(d => {
+                const date = new Date(d.Sale_Date);
+                const yearMonth = date.toISOString().slice(0, 7);
+                if (!salesAmountOverTime[yearMonth]) {
+                    salesAmountOverTime[yearMonth] = 0;
+                }
+                salesAmountOverTime[yearMonth] += parseFloat(d.Sales_Amount);
+            });
+            const dates = Object.keys(salesAmountOverTime);
+            const salesAmountsOverTime = Object.values(salesAmountOverTime);
+            Plotly.newPlot('sales-amount-over-time', [{ x: dates, y: salesAmountsOverTime, type: 'line' }], { title: 'Sales Amount Over Time' });
+
+            // 4. Scatter Plot: Quantity Sold vs Unit Price
+            const quantities = data.map(d => parseFloat(d.Quantity_Sold));
+            const unitPrices = data.map(d => parseFloat(d.Unit_Price));
+            Plotly.newPlot('quantity-sold-vs-unit-price', [{ x: quantities, y: unitPrices, type: 'scatter', mode: 'markers' }], { title: 'Quantity Sold vs Unit Price' });
+
+            // 5. Bar Chart: Sales Amount by Sales Rep
+            const salesAmountBySalesRep = {};
+            data.forEach(d => {
+                if (!salesAmountBySalesRep[d.Sales_Rep]) {
+                    salesAmountBySalesRep[d.Sales_Rep] = 0;
+                }
+                salesAmountBySalesRep[d.Sales_Rep] += parseFloat(d.Sales_Amount);
+            });
+            const salesReps = Object.keys(salesAmountBySalesRep);
+            const salesAmountsBySalesRep = Object.values(salesAmountBySalesRep);
+            Plotly.newPlot('sales-amount-by-sales-rep', [{ x: salesReps, y: salesAmountsBySalesRep, type: 'bar' }], { title: 'Sales Amount by Sales Rep' });
+
+            const chartsHtml = `
+                <div class="chart" id="sales-amount-by-region"></div>
+                <div class="chart" id="product-category-distribution"></div>
+                <div class="chart" id="sales-amount-over-time"></div>
+                <div class="chart" id="quantity-sold-vs-unit-price"></div>
+                <div class="chart" id="sales-amount-by-sales-rep"></div>
+            `;
+            document.getElementById('charts').innerHTML = chartsHtml;
+        }
+        fetchAndPlot();
+    </script>
+</body>
+</html>
+```
