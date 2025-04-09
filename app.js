@@ -167,48 +167,29 @@ app.post("/dashboard", async (req, res) => {
     const prompt = `Step1
 You are given this dataset in JSON format
 ${JSON.stringify(sampleData, null, 2)}
-
-Step2
-Analyze the structure of the dataset and infer its type such as sales data customer analytics employee records etc
+Step2:Analyze the structure of the dataset and infer its type such as sales data customer analytics employee records etc
 Then generate a clear dashboard title and a short summary paragraph of 3 to 4 lines that explains what the dataset is about and what kind of insights it offers
-
-Step3
-Identify and calculate 5 key KPIs from the dataset
+Step3:Identify and calculate 5 key KPIs from the dataset
 Each KPI should be relevant to the data context useful for decision making and dynamically computed
-
-Step4
-Determine 5 insightful data visualizations using the dataset
+Step4:Determine 5 insightful data visualizations using the dataset
 Choose the most suitable chart types for each pattern trend or category
 Each chart must include a chart title and a short explanation of the insight it reveals
-
-Step5
-Build a single HTML file that does the following
+Step5:Build a single HTML file that does the following
 Fetches the data dynamically using await fetch('/Json/${_id}.json') and stores it in a variable
 Waits for Chartjs to fully load from https://cdn.jsdelivr.net/npm/chart.js before rendering
 Renders all KPIs and charts dynamically without hardcoding any values
-
-LayoutStructure
-TopSection
-Display the dashboard title and dataset summary at the top of the dashboard
-
-KPISection
-Render a responsive grid of 5 KPI cards
+LayoutStructure:TopSection:Display the dashboard title and dataset summary at the top of the dashboard
+KPISection:Render a responsive grid of 5 KPI cards
 Each card must include the KPI title KPI value and an optional trend indicator or visual icon
-
-ChartSection
-Render 5 charts in a responsive grid layout
+ChartSection:Render 5 charts in a responsive grid layout
 Each chart should be inside a card with a title chart canvas and a short insight below
-
-UIRequirements
-Use a modern glassmorphism UI design with a stylish background color using ${randomColor}
+UIRequirements:Use a modern glassmorphism UI design with a stylish background color using ${randomColor}
 Use modern web fonts like Poppins Inter or Roboto
 Ensure a clean responsive and elegant layout using card or grid-based structure
 Apply subtle shadows rounded corners and hover effects to chart cards and buttons
 Ensure all elements are visually consistent with no overlap or clutter
 Maintain good spacing and readability across all screen sizes
-
-Output
-Only output the full HTML code for this without any extra explanation or comments
+Output:Only output the full HTML code for this without any extra explanation or comments
 `;
 
     const response = await fetch(
