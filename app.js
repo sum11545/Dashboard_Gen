@@ -172,29 +172,12 @@ app.post("/dashboard", async (req, res) => {
       "Aurora Fade", // name for custom gradient
     ];
     const randomColor = randomBg[Math.floor(Math.random() * randomBg.length)];
-    const prompt = `
-Step 1: You are given this dataset in JSON format:
-${JSON.stringify(sampleData, null, 2)}
-
-Understand the structure of this data and:
-1. Identify and suggest 5 key metrics or patterns that should be visualized for maximum business or operational insights.
-2. For each suggested visualization, provide a 1-2 sentence explanation of what insight the chart will deliver and why it's important.
-
-Step 2: Now build a single HTML file that:
-- Fetches data using \`await fetch('/Json/${_id}.json')\` and stores it in a variable.
-- Waits for Plotly (https://cdn.plot.ly/plotly-2.19.0.min.js) to fully load before rendering.
-- Dynamically uses the fetched data for plotting — DO NOT hardcode chart values.
-
-Charts Required:
-- All 5 charts that were suggested in Step 1.
-- Each chart should be accompanied by a short text below it explaining its insight.
-
-UI Requirements:
-- Use a **modern glassmorphism design**.
-- Apply a stylish background color using this value: ${randomColor}.
-- Layout should be **clean, responsive, and elegant**, using cards or grid layout with proper spacing.
-- Avoid oversized charts. Each chart should be appropriately scaled and wrapped inside a scrollable container if needed.
-- Use modern fonts, subtle shadows, rounded corners, and hover effects for cards and buttons.
+    const prompt = `Step 1: You are given this dataset in JSON format:${JSON.stringify(
+      sampleData,
+      null,
+      2
+    )}Understand the structure of this data and Identify and suggest 5 key metrics or patterns that should be visualized for maximum business or operational insights.
+    Step 2: Now build a single HTML file that:Fetches data using \`await fetch('/Json/${_id}.json')\` and stores it in a variable.Waits for Plotly (https://cdn.plot.ly/plotly-2.19.0.min.js) to fully load before rendering. Dynamically uses the fetched data for plotting — DO NOT hardcode chart values.Charts Required: All 5 charts that were suggested in Step 1.Each chart should be accompanied by a short text below it explaining its insight.UI Requirements: Use a modern glassmorphism design.Apply a stylish background color using this value: ${randomColor}.Layout should be clean, responsive, and elegant, using cards or grid layout with proper spacing.Avoid oversized charts. Each chart should be appropriately scaled and wrapped inside a scrollable container if needed.Use modern fonts, subtle shadows, rounded corners, and hover effects for cards and buttons.
 
 Output ONLY the full HTML code for this — no additional explanation or notes.
 `;
