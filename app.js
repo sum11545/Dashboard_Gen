@@ -170,11 +170,12 @@ app.post("/dashboard", async (req, res) => {
       null,
       2
     )} 
-    Understand the structure of this data and identify 5 key metrics or patterns that should be visualized for meaningful business or operational insights
-    Make sure each metric helps in drawing actionable conclusions.
-    Step 2
-    Now build a single HTML file that Fetches data using await fetch('/Json/${_id}.json') and stores it in a variable .Waits for Chart.js (\`https://cdn.jsdelivr.net/npm/chart.js\`) to fully load before rendering.Dynamically uses the fetched data for plotting — do not hardcode any chart values Includes all 5 charts that were suggested in Step 1.Displays a short, meaningful insight below each chart explaining its significance.
-Use a modern glassmorphism UI design with a stylish background color using ${randomColor}.Ensure the layout is clean, responsive, and elegant.Use card or grid-based layout with proper spacing .Avoid oversized charts and maintain appropriate width and height for all screen sizes. Use modern web fonts, subtle shadows, rounded corners, and hover effects for chart cards and buttons.Ensure visual consistency and avoid overlapping or cluttered graphs.Select the most suitable chart types for clarity.
+    Analyze the structure of the dataset and infer its type — for example, sales data, customer analytics, employee records, etc.
+Step 2:Based on the dataset type, generate: A clear and meaningful dashboard title.A short summary paragraph (3-4 lines) describing what the dataset represents and what insights can be expected.
+Step 3:Identify and calculate 5 key KPIs
+Step 4:Determine 5 insightful visualizations based on trends, patterns, or categories in the dataset. Choose the most suitable chart types.
+Step 5:Now build a single HTML file that Fetches data using await fetch('/Json/${_id}.json') and stores it in a variable .Waits for Chart.js (\`https://cdn.jsdelivr.net/npm/chart.js\`) to fully load before rendering.Dynamically uses the fetched data for plotting — do not hardcode any chart values Includes all 5 charts that were suggested in Step 4 Displays a short, meaningful insight below each chart explaining its significance.A responsive grid of 5 KPI cards form Step 3.Each card includes: Metric title (e.g., "Total Users"),Metric value,(Optional) small trend/indicator
+Use a modern glassmorphism UI design with a stylish background color using ${randomColor}. Use modern web fonts like Poppins, Inter, or Roboto.Ensure the layout is clean, responsive, and elegant.Use card or grid-based layout with proper spacing .Avoid oversized charts and maintain appropriate width and height for all screen sizes. Use modern web fonts, subtle shadows, rounded corners, and hover effects for chart cards and buttons.Ensure visual consistency and avoid overlapping or cluttered graphs.Select the most suitable chart types for clarity.
     
     Output only the full HTML code for this with no extra explanation or comments
     
