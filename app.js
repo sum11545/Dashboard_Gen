@@ -171,31 +171,20 @@ app.post("/dashboard", async (req, res) => {
     // Step2:Build a single HTML file that does the following,Fetches the data dynamically using await fetch('/Json/${_id}.json') and stores it in a variable.Waits for Chartjs to fully load from https://cdn.jsdelivr.net/npm/chart.js before rendering.Renders all KPIs and charts dynamically without hardcoding any values and Use Fetch Value to dynamically render the KPI and Chart value dont use sample data value.TopSection:Display the dashboard title and dataset summary at the top of the dashboard.KPISection:Render a responsive grid of 5 KPI cards and Each card must include the KPI title KPI value.Keep some Margin Top Between the Sections.ChartSection:Render 5 charts in a responsive grid layout form step 1.Each chart should be inside a card each card atleast should be 300px wide.with a title chart canvas and a short insight below.Make sure the cards doesn't shift right it should go down and keeps the charts readable.UIRequirements:Use a modern glassmorphism UI design with a stylish background color using ${randomColor}Use modern web fonts like Poppins Inter or Roboto.Ensure a clean responsive and elegant layout using card or grid-based structure.Apply subtle shadows rounded corners and hover effects to chart cards and buttons.Ensure all elements are visually consistent with no overlap or clutter.Maintain good spacing and readability across all screen sizes make dont.
     // Output:Only output the full HTML code for this without any extra explanation or comments
     // `;
-    const prompt = `
-You are given this sample data in JSON format
+    const prompt = `Step 1: Analyze the given sample JSON:
 ${JSON.stringify(sampleData, null, 2)}
+Generate a clear dashboard title, a 3 to 4 line summary of the dataset, and compute 5 insightful KPIs (numerical or string based, avoid NaN or undefined, skip irrelevant non numeric calculations). Then, suggest 5 charts with titles, chart types, and short insights using trend or category based views.
 
-1. Analyze and understand the data
-2. Generate
-  A meaningful dashboard title
-  A 3 to 4 line summary explaining what the dataset is about and the type of insights it can provide
-  Five insightful KPIs based on the data context with valid and non-NaN values
-  Five smart chart ideas including chart title, short explanation, and suitable chart type
-3. Build a single HTML dashboard that
-  Dynamically fetches JSON from /Json/${_id}.json
-  Waits for Chartjs from https://cdn.jsdelivr.net/npm/chart.js
-  Renders title and summary in top section
-  Renders 5 KPI cards in a responsive grid using only fetched data
-  Renders 5 charts with titles and insights below each canvas
-  Each chart card must be at least 300px wide and flow vertically if needed
-4. UI requirements
-  Use glassmorphism style with background color ${randomColor}
-  Use modern web font like Poppins Inter or Roboto
-  Clean responsive layout with cards grid spacing no clutter
-  Use shadows rounded corners and hover effects
+Step 2: Build a single responsive HTML dashboard that:
+Fetches data from /Json/${_id}.json using await fetch
+Waits for Chart.js (https://cdn.jsdelivr.net/npm/chart.js) to load before rendering
+Renders a TopSection with the title and summary
+Displays 5 dynamic KPI cards in a grid (with margin top)
+Shows 5 charts in cards (minimum 300px width) with title, canvas, and insight
+Uses modern glassmorphism UI with ${randomColor}, Poppins Inter or Roboto fonts
+Has clean elegant spacing, shadows, rounded corners, and responsive layout
 
-Output only the complete HTML code no explanation no comments
-`;
+Output: Only return the full HTML code with no extra explanation.`;
 
     const response = await fetch(
       "https://api.groq.com/openai/v1/chat/completions",
