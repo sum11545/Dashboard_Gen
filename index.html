@@ -149,7 +149,7 @@
               </html>
             `);
 
-            const dashboardRes = await fetch("https://dashboard-gen.onrender.com/dashboard", {
+            const dashboardRes = await fetch("http://localhost:3000/dashboard", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ _id: dashboardId }),

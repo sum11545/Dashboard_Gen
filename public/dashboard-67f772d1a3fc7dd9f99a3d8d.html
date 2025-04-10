@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Sales Dashboard</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: rgba(255, 250, 250, 0.8);
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .top-section {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .kpi-section {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        .kpi-card {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .chart-section {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+        .chart-card {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            min-width: 300px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="top-section">
+            <h1>Car Sales Dashboard</h1>
+            <p>This dataset contains information about car sales, including the name, year, selling price, and other details. It provides insights into car sales trends and patterns.</p>
+        </div>
+        <div class="kpi-section" id="kpi-section"></div>
+        <div class="chart-section" id="chart-section"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Fetch data
+        async function fetchData() {
+            const response = await fetch('/Json/67f772d1a3fc7dd9f99a3d8d.json');
+            const data = await response.json();
+            return data;
+        }
+
+        // Calculate KPIs
+        async function calculateKPIs(data) {
+            const kpis = [];
+            kpis.push({
+                title: 'Total Cars',
+                value: data.length
+            });
+            kpis.push({
+                title: 'Average Selling Price',
+                value: data.reduce((acc, curr) => acc + parseInt(curr.selling_price), 0) / data.length
+            });
+            kpis.push({
+                title: 'Most Common Fuel Type',
+                value: data.reduce((acc, curr) => {
+                    if (!acc[curr.fuel]) {
+                        acc[curr.fuel] = 0;
+                    }
+                    acc[curr.fuel]++;
+                    return acc;
+                }, {})[Object.keys(data.reduce((acc, curr) => {
+                    if (!acc[curr.fuel]) {
+                        acc[curr.fuel] = 0;
+                    }
+                    acc[curr.fuel]++;
+                    return acc;
+                }, {})).sort((a, b) => data.reduce((acc, curr) => {
+                    if (!acc[curr.fuel]) {
+                        acc[curr.fuel] = 0;
+                    }
+                    acc[curr.fuel]++;
+                    return acc;
+                }, {})[b] - data.reduce((acc, curr) => {
+                    if (!acc[curr.fuel]) {
+                        acc[curr.fuel] = 0;
+                    }
+                    acc[curr.fuel]++;
+                    return acc;
+                }, {})[a])[0]]
+            });
+            kpis.push({
+                title: 'Most Common Seller Type',
+                value: data.reduce((acc, curr) => {
+                    if (!acc[curr.seller_type]) {
+                        acc[curr.seller_type] = 0;
+                    }
+                    acc[curr.seller_type]++;
+                    return acc;
+                }, {})[Object.keys(data.reduce((acc, curr) => {
+                    if (!acc[curr.seller_type]) {
+                        acc[curr.seller_type] = 0;
+                    }
+                    acc[curr.seller_type]++;
+                    return acc;
+                }, {})).sort((a, b) => data.reduce((acc, curr) => {
+                    if (!acc[curr.seller_type]) {
+                        acc[curr.seller_type] = 0;
+                    }
+                    acc[curr.seller_type]++;
+                    return acc;
+                }, {})[b] - data.reduce((acc, curr) => {
+                    if (!acc[curr.seller_type]) {
+                        acc[curr.seller_type] = 0;
+                    }
+                    acc[curr.seller_type]++;
+                    return acc;
+                }, {})[a])[0]]
+            });
+            kpis.push({
+                title: 'Average KM Driven',
+                value: data.reduce((acc, curr) => acc + parseInt(curr.km_driven), 0) / data.length
+            });
+            return kpis;
+        }
+
+        // Render KPIs
+        async function renderKPIs(kpis) {
+            const kpiSection = document.getElementById('kpi-section');
+            kpiSection.innerHTML = '';
+            kpis.forEach(kpi => {
+                const kpiCard = document.createElement('div');
+                kpiCard.classList.add('kpi-card');
+                kpiCard.innerHTML = `
+                    <h2>${kpi.title}</h2>
+                    <p>${kpi.value}</p>
+                `;
+                kpiSection.appendChild(kpiCard);
+            });
+        }
+
+        // Render charts
+        async function renderCharts(data) {
+            const chartSection = document.getElementById('chart-section');
+            chartSection.innerHTML = '';
+            // Chart 1: Fuel type distribution
+            const chart1Card = document.createElement('div');
+            chart1Card.classList.add('chart-card');
+            const chart1Canvas = document.createElement('canvas');
+            chart1Canvas.width = 200;
+            chart1Canvas.height = 200;
+            chart1Card.appendChild(chart1Canvas);
+            chart1Card.innerHTML += `
+                <h2>Fuel Type Distribution</h2>
+                <p>This chart shows the distribution of fuel types among the cars.</p>
+            `;
+            const chart1Data = data.reduce((acc, curr) => {
+                if (!acc[curr.fuel]) {
+                    acc[curr.fuel] = 0;
+                }
+                acc[curr.fuel]++;
+                return acc;
+            }, {});
+            const chart1 = new Chart(chart1Canvas, {
+                type: 'pie',
+                data: {
+                    labels: Object.keys(chart1Data),
+                    datasets: [{
+                        label: 'Fuel Type Distribution',
+                        data: Object.values(chart1Data),
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 206, 86, 0.2)',
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(153, 102, 255, 0.2)',
+                            'rgba(255, 159, 64, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+            chartSection.appendChild(chart1Card);
+
+            // Chart 2: Seller type distribution
+            const chart2Card = document.createElement('div');
+            chart2Card.classList.add('chart-card');
+            const chart2Canvas = document.createElement('canvas');
+            chart2Canvas.width = 200;
+            chart2Canvas.height = 200;
+            chart2Card.appendChild(chart2Canvas);
+            chart2Card.innerHTML += `
+                <h2>Seller Type Distribution</h2>
+                <p>This chart shows the distribution of seller types among the cars.</p>
+            `;
+            const chart2Data = data.reduce((acc, curr) => {
+                if (!acc[curr.seller_type]) {
+                    acc[curr.seller_type] = 0;
+                }
+                acc[curr.seller_type]++;
+                return acc;
+            }, {});
+            const chart2 = new Chart(chart2Canvas, {
+                type: 'pie',
+                data: {
+                    labels: Object.keys(chart2Data),
+                    datasets: [{
+                        label: 'Seller Type Distribution',
+                        data: Object.values(chart2Data),
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 206, 86, 0.2)',
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(153, 102, 255, 0.2)',
+                            'rgba(255, 159, 64, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+            chartSection.appendChild(chart2Card);
+
+            // Chart 3: Average selling price by fuel type
+            const chart3Card = document.createElement('div');
+            chart3Card.classList.add('chart-card');
+            const chart3Canvas = document.createElement('canvas');
+            chart3Canvas.width = 200;
+            chart3Canvas.height = 200;
+            chart3Card.appendChild(chart3Canvas);
+            chart3Card.innerHTML += `
+                <h2>Average Selling Price by Fuel Type</h2>
+                <p>This chart shows the average selling price of cars by fuel type.</p>
+            `;
+            const chart3Data = data.reduce((acc, curr) => {
+                if (!acc[curr.fuel]) {
+                    acc[curr.fuel] = {
+                        sum: 0,
+                        count: 0
+                    };
+                }
+                acc[curr.fuel].sum += parseInt(curr.selling_price);
+                acc[curr.fuel].count++;
+                return acc;
+            }, {});
+            const chart3Labels = Object.keys(chart3Data);
+            const chart3Values = Object.values(chart3Data).map(value => value.sum / value.count);
+            const chart3 = new Chart(chart3Canvas, {
+                type: 'bar',
+                data: {
+                    labels: chart3Labels,
+                    datasets: [{
+                        label: 'Average Selling Price by Fuel Type',
+                        data: chart3Values,
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 206, 86, 0.2)',
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(153, 102, 255, 0.2)',
+                            'rgba(255, 159, 64, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+            chartSection.appendChild(chart3Card);
+
+            // Chart 4: Average KM driven by seller type
+            const chart4Card = document.createElement('div');
+            chart4Card.classList.add('chart-card');
+            const chart4Canvas = document.createElement('canvas');
+            chart4Canvas.width = 200;
+            chart4Canvas.height = 200;
+            chart4Card.appendChild(chart4Canvas);
+            chart4Card.innerHTML += `
+                <h2>Average KM Driven by Seller Type</h2>
+                <p>This chart shows the average KM driven of cars by seller type.</p>
+            `;
+            const chart4Data = data.reduce((acc, curr) => {
+                if (!acc[curr.seller_type]) {
+                    acc[curr.seller_type] = {
+                        sum: 0,
+                        count: 0
+                    };
+                }
+                acc[curr.seller_type].sum += parseInt(curr.km_driven);
+                acc[curr.seller_type].count++;
+                return acc;
+            }, {});
+            const chart4Labels = Object.keys(chart4Data);
+            const chart4Values = Object.values(chart4Data).map(value => value.sum / value.count);
+            const chart4 = new Chart(chart4Canvas, {
+                type: 'bar',
+                data: {
+                    labels: chart4Labels,
+                    datasets: [{
+                        label: 'Average KM Driven by Seller Type',
+                        data: chart4Values,
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 206, 86, 0.2)',
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(153, 102, 255, 0.2)',
+                            'rgba(255, 159, 64, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+            chartSection.appendChild(chart4Card);
+
+            // Chart 5: Selling price distribution
+            const chart5Card = document.createElement('div');
+            chart5Card.classList.add('chart-card');
+            const chart5Canvas = document.createElement('canvas');
+            chart5Canvas.width = 200;
+            chart5Canvas.height = 200;
+            chart5Card.appendChild(chart5Canvas);
+            chart5Card.innerHTML += `
+                <h2>Selling Price Distribution</h2>
+                <p>This chart shows the distribution of selling prices among the cars.</p>
+            `;
+            const chart5Data = data.map(car => parseInt(car.selling_price));
+            const chart5 = new Chart(chart5Canvas, {
+                type: 'histogram',
+                data: {
+                    labels: chart5Data,
+                    datasets: [{
+                        label: 'Selling Price Distribution',
+                        data: chart5Data,
+                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+            chartSection.appendChild(chart5Card);
+        }
+
+        // Main function
+        async function main() {
+            const data = await fetchData();
+            const kpis = await calculateKPIs(data);
+            await renderKPIs(kpis);
+            await renderCharts(data);
+        }
+
+        main();
+    </script>
+</body>
+</html>
+```

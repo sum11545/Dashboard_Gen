@@ -266,6 +266,8 @@ app.post("/userupdate", async (req, res) => {
     );
 
     const datas = await response.json();
+    console.log(datas);
+
     const updatedOutput = datas.choices[0].message.content;
     const cleanedOutput = updatedOutput.replace(/```html\n|\|/g, "");
 
