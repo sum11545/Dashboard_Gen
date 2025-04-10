@@ -170,7 +170,7 @@ Understand the sample data. On the basis of JSON data.generate a clear dashboard
 Step2:Build a single HTML file that does the following
 Fetches the data dynamically using await fetch('/Json/${_id}.json') and stores it in a variable
 Waits for Chartjs to fully load from https://cdn.jsdelivr.net/npm/chart.js before rendering
-Renders all KPIs and charts dynamically without hardcoding any values.TopSection:Display the dashboard title and dataset summary at the top of the dashboard.KPISection:Render a responsive grid of 5 KPI cards
+Renders all KPIs and charts dynamically without hardcoding any values and Use Fetch Value to dyanmically render the KPI and Chart value dont use sample data value .TopSection:Display the dashboard title and dataset summary at the top of the dashboard.KPISection:Render a responsive grid of 5 KPI cards
 Each card must include the KPI title KPI value.ChartSection:Render 5 charts in a responsive grid layout.Each chart should be inside a card with a title chart canvas and a short insight below.UIRequirements:Use a modern glassmorphism UI design with a stylish background color using ${randomColor}
 Use modern web fonts like Poppins Inter or Roboto.Ensure a clean responsive and elegant layout using card or grid-based structure.Apply subtle shadows rounded corners and hover effects to chart cards and buttons.Ensure all elements are visually consistent with no overlap or clutter.Maintain good spacing and readability across all screen sizes
 Output:Only output the full HTML code for this without any extra explanation or comments
