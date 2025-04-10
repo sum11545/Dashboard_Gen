@@ -179,7 +179,7 @@ Step 2: Build a single responsive HTML dashboard that:
 Fetches the data dynamically using await fetch('/Json/${_id}.json') and stores it in a variable, 
 Waits for Chart.js (https://cdn.jsdelivr.net/npm/chart.js) to load before rendering anything,
 Renders all KPIs and charts dynamically without hardcoding any values and Use Fetch Value to dynamically render the KPI and Chart value dont use sample data value.Renders a TopSection with the title and summary.Displays 5 dynamic KPI cards in a grid (with margin top)
-Shows 5 charts in card with 400px width with title, canvas, and insight
+Shows 5 charts in card with 400px width with title, canvas, and insight Make sure chart dont moves to right 
 Uses modern glassmorphism UI with ${randomColor}, Poppins Inter or Roboto fonts.Has clean elegant spacing, shadows, rounded corners, and responsive layout. clean layout, spacing, soft shadows, rounded corners, hover effects, and fully responsive design.
 Output: Only return the full HTML code with no extra explanation.`;
 
