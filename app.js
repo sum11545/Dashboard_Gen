@@ -164,9 +164,9 @@ app.post("/dashboard", async (req, res) => {
     ];
 
     const randomColor = randomBg[Math.floor(Math.random() * randomBg.length)];
-    const prompt = `Step1:You are given this dataset in JSON format
+    const prompt = `Step1:You are given this sample data  in JSON format
 ${JSON.stringify(sampleData, null, 2)}
-Understand the sample. On the basis of JSON data.generate a clear dashboard title and a short summary paragraph of 3 to 4 lines that explains what the dataset is about and what kind of insights it offers.Identify and calculate 5 key Key Performace Indicator s from the dataset.Each KPI should be relevant to the data context useful for decision making and dynamically computed.Determine 5 insightful data visualizations using the sample data.Choose the most suitable chart types for each pattern trend or category.Each chart must include a chart title and a short explanation of the insight it reveals
+Understand the sample data. On the basis of JSON data.generate a clear dashboard title and a short summary paragraph of 3 to 4 lines that explains what the dataset is about and what kind of insights it offers.Identify and calculate 5 key Key Performace Indicator s from the dataset.Each KPI should be relevant to the data context useful for decision making and dynamically computed.Determine 5 insightful data visualizations using the sample data.Choose the most suitable chart types for each pattern trend or category.Each chart must include a chart title and a short explanation of the insight it reveals
 Step2:Build a single HTML file that does the following
 Fetches the data dynamically using await fetch('/Json/${_id}.json') and stores it in a variable
 Waits for Chartjs to fully load from https://cdn.jsdelivr.net/npm/chart.js before rendering
