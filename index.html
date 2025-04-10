@@ -198,6 +198,10 @@
             didOpen: () => Swal.showLoading(),
             allowOutsideClick: false,
           });
+          console.log("Sending:", {
+  _id: dashboardId,
+  prompt
+});
 
           const response = await fetch("https://dashboard-gen.onrender.com/userupdate", {
             method: "POST",
